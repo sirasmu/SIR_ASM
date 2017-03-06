@@ -17,7 +17,7 @@
 	mov d, c
 	dec d
 	cp d, a; 
-	brge correction; If c > a then the i and c counts needs to be corrected
+	brge correction; If c > a then the i and c counts will need to be corrected
 	remainder:	
 		mov r, a
 		sub r, c

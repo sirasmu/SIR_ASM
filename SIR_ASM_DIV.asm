@@ -2,9 +2,9 @@
 	.def    a = r16           	;To hold dividend
 	.def    b = r17           	;To hold divisor
 	.def	c = r19			;Count for whether you reached the value of a
-	.def	d = r21			;Used as c-1 to see whether c is greater than a
-	.def	i = r18			;Result. Counts amount of times b can be added to itself before reaching a
-	.def	r = r20			;Remainder
+	.def	d = r21			;Copies c and decrements. Used as c-1 to see whether c is greater than a
+	.def	i = r18			;Result. Counts amount of times the b value can be added to itself before reaching a
+	.def	r = r20			;Remainder. Copies a and substracts c from it.
 	ldi a, 6
 	ldi b, 3
 	ldi i, 0

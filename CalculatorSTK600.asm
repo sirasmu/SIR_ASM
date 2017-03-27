@@ -6,40 +6,39 @@
 ;
 
 
-; Replace with your application code
 start:
 .include "m2560def.inc"
 	.def	a = r16				;Number 1 to add together
 	.def	b = r17				;Number 2 to add together
 	.def	result = r18			;Result of the calculation with a and b
-	.def	operator = r19			;Operator to use with a and b
-	.def	switch = r20			;Input
-	.def	light = r21			;Output
-	.def	temp = r22			;Used for saving temporary information
+	.def	switch = r19			;Input
+	.def	light = r20			;Output
+	.def	temp = r21			;Used for saving temporary information
 
 	ldi switch, 0x00			;Load low value for Input port
 	out ddrA, switch			;Configure PortA as an Input port
 	ldi light, 0xff				;Load high value for Output port
 	out ddrB, light				;Configure PortB as an Output port
 	
-	next_a:
-		ldi a, 0
+	next_a:					;The "next" is used 
+		call long_delay			;Not necesarry, but if the code is changed to be able to loop back to the start it is useful to prevent the registration of a button press
+		ldi a, 0			;Value 'a' and 'b' needs to be cleared so no mistake in the calculation happens in the case of not providing a new input
 		ldi b, 0
-		ldi light, 0b11111111
-		loop_a:
-			in switch, pinA
-			call delay ;Prevent jitter
+		ldi light, 0b11111111		;Just so that no light is on when the program starts, might be removed
+		loop_a:				;Should keep looping until you have given the input for the desired 'a' value
+			in switch, pinA		;Get the input from the switch
+			call delay 		;Prevent jitter
 
-			cpi switch, 0b01111111 ;Save value if "Enter" switch is pressed. The value of "Enter" is 0b10000000
+			cpi switch, 0b01111111	;Save current 'a' value if "Enter" switch is pressed. The value of "Enter" is 0b01111111
 			breq next_b
 
-			mov temp, switch
+			mov temp, switch	;Save 'a' value
 			com temp
 			add a, temp
 			mov temp, a
 			com temp
 
-			mov light, temp
+			mov light, temp		
 			out portB, light
 			call long_delay ;To prevent immediate addtion when holding the swithch for prolonged time
 			rjmp loop_a

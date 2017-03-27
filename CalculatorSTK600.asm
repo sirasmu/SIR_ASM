@@ -94,19 +94,14 @@ start:
 			rjmp loop_result
 
 /************FUNCTIONS TO CALL******************/
-	delay:
-			ldi r23, 1
-		d0:	ldi r24,255
-		d1:	ldi	r25, 255
-		d2:	
-			nop
+	delay:  ldi r24,255
+		d1:	ldi r25, 255
+		d2:	nop
 			nop
 			dec r25
 			brne d2
 			dec r24
 			brne d1
-			dec r23
-			brne d0
 			ret
 	
 	long_delay:

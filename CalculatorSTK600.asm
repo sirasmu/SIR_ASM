@@ -65,7 +65,7 @@ start:
 			rjmp loop_b
 	
 	next_operator: ;not in use atm
-		call long_delay
+		call long_delay			;This is to prevent that the previous selection will be taken as a switch input
 		ldi light, 0b11111111
 		out portB, light
 
@@ -73,21 +73,21 @@ start:
 			in switch, pinA
 			call long_delay
 
-			cpi switch, 0b11111110 ;Save value if "Enter" switch is pressed. The value of "Enter" is 0b10000000
+			cpi switch, 0b11111110 ;If this value is read from the swithc input do an addition where "a+b=result"
 			breq addition
 
-			cpi switch, 0b11111101 ;Save value if "Enter" switch is pressed. The value of "Enter" is 0b10000000
+			cpi switch, 0b11111101 ;If this value is read from the swithc input do a subtraction where "a-b=result"
 			breq subtraction
 
-			cpi switch, 0b11111011 ;Save value if "Enter" switch is pressed. The value of "Enter" is 0b10000000
+			cpi switch, 0b11111011 ;If this value is read from the swithc input do a multiplication where "a*b=result"
 			breq multiplication
 
-			cpi switch, 0b11110111 ;Save value if "Enter" switch is pressed. The value of "Enter" is 0b10000000
+			cpi switch, 0b11110111 ;If this value is read from the swithc input do a division where "a/b=result"
 			breq division
 
 			rjmp loop_operator
 	next_calculate:
-		loop_result:
+		loop_result:			;Keep displaying the result
 			mov light, result
 			com light
 			out portB, light
@@ -149,7 +149,6 @@ start:
 		mov result, r0
 		rjmp loop_result
 
-	;My own algorithm for dividing in assembly... I'll name it SIR_ASM_DIV
 	division:
 	ldi light, 0b11110111
 	out portB, light

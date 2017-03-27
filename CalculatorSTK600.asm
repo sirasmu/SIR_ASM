@@ -32,7 +32,7 @@ start:
 			cpi switch, 0b01111111	;Save current 'a' value if "Enter" switch is pressed. The value of "Enter" is 0b01111111
 			breq next_b
 
-			mov temp, switch	;Save 'a' value
+			mov temp, switch	;Save 'a' value, maybe put this into a function call
 			com temp
 			add a, temp
 			mov temp, a

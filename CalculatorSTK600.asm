@@ -44,7 +44,7 @@ start:
 			rjmp loop_a
 	
 	next_b:
-		call long_delay
+		call long_delay			;This is to prevent that the previous selection will be taken as a switch input
 		ldi light, 0b11111111
 		loop_b:
 			in switch, pinA

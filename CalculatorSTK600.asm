@@ -9,21 +9,20 @@
 ; Replace with your application code
 start:
 .include "m2560def.inc"
-	.def	a = r16					;Number 1 to add together
-	.def	b = r17					;Number 2 to add together
+	.def	a = r16				;Number 1 to add together
+	.def	b = r17				;Number 2 to add together
 	.def	result = r18			;Result of the calculation with a and b
 	.def	operator = r19			;Operator to use with a and b
-	.def	switch = r20			;input
-	.def	light = r21				;output
-	.def	temp = r22				;ehhh
+	.def	switch = r20			;Input
+	.def	light = r21			;Output
+	.def	temp = r22			;Used for saving temporary information
 
-	ldi switch, 0x00					;Load low value for Input port
-	out ddrA, switch					;Configure PortA as an Input port
-	ldi light, 0xff					;Load high value for Output port
-	out ddrB, light					;Configure PortB as an Output port
+	ldi switch, 0x00			;Load low value for Input port
+	out ddrA, switch			;Configure PortA as an Input port
+	ldi light, 0xff				;Load high value for Output port
+	out ddrB, light				;Configure PortB as an Output port
 	
 	next_a:
-		call long_delay ;only needed if you decide to loop back after a calculation
 		ldi a, 0
 		ldi b, 0
 		ldi light, 0b11111111

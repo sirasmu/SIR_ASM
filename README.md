@@ -1,2 +1,2 @@
-# SIR_ASM_DIV
-This is my own assembly division algorithm I created because I could not find any satisfying ones elsewhere
+# sir_asm_programming
+This is my assembly programs. I am currently working on a calculator.

@@ -38,9 +38,9 @@ start:
 			mov temp, a
 			com temp
 
-			mov light, temp		
+			mov light, temp		;Update the light output
 			out portB, light
-			call long_delay ;To prevent immediate addtion when holding the swithch for prolonged time
+			call long_delay 	;To prevent immediate addtion when holding the swithch for prolonged time
 			rjmp loop_a
 	
 	next_b:

@@ -169,10 +169,9 @@ start:
 	dec d
 	cp d, a; 
 	brge correction; If c > a then the i and c counts will need to be corrected
-	remainder:	
-		//not needed
+	div_result:	
 		rjmp loop_result
 	correction: 
 		sub c, b
 		dec result
-		rjmp remainder
+		rjmp div_result

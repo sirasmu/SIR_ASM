@@ -21,13 +21,13 @@ LDI X_LOW, MEMSTARTLOW
 3) Make RAM test on those RAM locations before running your Fibonacci program 
 */
 
-ADD X_HIGH,X_LOW
-CPI X_HIGH,0xFF
+ADD X_HIGH, X_LOW
+CPI X_HIGH, 0xFF
 BREQ CLEAR
 RJMP NEXT
 CLEAR:
-		LDI X_HIGH,0x00
-		LDI X_LOW,0x00
+		LDI X_HIGH, 0x00
+		LDI X_LOW, 0x00
 
 
 /*
@@ -66,11 +66,10 @@ FIBONACCI:
     ADIW X_LOW, 10    ;Adds an immediate value (0-63) to a register pair and places the result in the register pair.
     LD RESULT, X       ;Load value from RAM (X) (Our N number -> our fibonacci number) into Register 21
  
-    CPI RESULT,0       ;IF condition to check if our finonacci number is 0,
-    BREQ IFZERO     ;Then go to IFZERO
-       
-    CPI RESULT,1       ;IF condition to check if our finonacci number is 1, then go to IFZERO
-    BREQ IFONE      ;Then go to IFONE
+    CPI RESULT, 0       ;IF condition to check if our finonacci number is 0
+    BREQ BASECASE     ;Then go to the base case  
+    CPI RESULT, 1       ;IF condition to check if our finonacci number is 1
+    BREQ BASECASE      ;Then go to the base case
  
     DEC RESULT         ;Decrement the value in register 21 (N-1)
     PUSH RESULT        ;Push the value of register 21 to the stack
@@ -79,11 +78,11 @@ FIBONACCI:
  
     DEC RESULT         ;Decrement the value in register 21 again, so now it is (N-2)
     PUSH RESULT        ;Push the value of register 21 to the stack
-    CALL FIBONACCI  ;HERE I CAN'T SEE HOW THE RECURSIVE ACTUALLY WORKS, BUT IT WORKS FINE
+    CALL FIBONACCI  ;Recursive call of the fibonacci subrutine
     POP R16         ;Pop register from the stack, so here we store the value of fibonacci(N-2)
  
     ADD R22,R16     ;Adding the fibonacci(N-1) + fibonacci(N-2) together (our formula) into register 22
-    ST X,R22        ;Store the value from register 22 into our RAM stack address
+    ST X, R22        ;Store the value from register 22 into our RAM stack address
            
 ENDFIBONACCI:
     POP X_HIGH         ;Popping all the register we use for the calculation from the stack
@@ -94,13 +93,9 @@ ENDFIBONACCI:
     POP RESULT
     RET             ;Returning to the frequency again at the line after the call
  
-IFONE:
+BASECASE:
     LDI R18, 1      ;Store value 1 into register 18, to return 1 in case our fibonacci number is 1
-    ST X,R18        ;Store the value from register 18 into our RAM stack address
+    ST X, R18        ;Store the value from register 18 into our RAM stack address
     RJMP ENDFIBONACCI
        
-IFZERO:
-    LDI R18, 1      ;Store value 1 into register 18, to return 1 in case our fibonacci number is 0
-    ST X,R18        ;Store the value from register 18 into our RAM stack address
-    RJMP ENDFIBONACCI
 DONE: RJMP DONE

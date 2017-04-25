@@ -6,7 +6,6 @@
 ;
 
 start: 
-// 2)	Find RAM addresses space at Atmel Studio, where you can store Fibonacci numbers.
 .def X_HIGH=R27
 .def X_LOW=R26
 .def FIB_POSITION=R21

@@ -6,10 +6,10 @@
 ;
 
 start: 
-.def X_HIGH=R27
-.def X_LOW=R26
-.def FIB_POSITION=R21
-.def RESULT=R21
+.def X_HIGH = R27
+.def X_LOW = R26
+.def FIB_POSITION = R21
+.def RESULT = R21
 .equ MEMSTARTHIGH = 0x55
 .equ MEMSTARTLOW = 0xAA
 
@@ -17,7 +17,9 @@ start:
 LDI X_HIGH, MEMSTARTHIGH
 LDI X_LOW, MEMSTARTLOW
 
-//3)	Make RAM test on those RAM locations before running your Fibonacci program 
+/*
+3) Make RAM test on those RAM locations before running your Fibonacci program 
+*/
 
 ADD X_HIGH,X_LOW
 CPI X_HIGH,0xFF
@@ -29,25 +31,26 @@ CLEAR:
 
 
 /*
-4)To train your skills concerning the stack, POP, PUSH, CALL and RETurn, 
+4) To train your skills concerning the stack, POP, PUSH, CALL and RETurn, 
 you should now use the VIA Calling Convention to implement a recursive 
-version of fib-function (Fibonacci sequence).*/
+version of fib-function (Fibonacci sequence).
+*/
 
-LDI FIB_POSITION, 3 //where we start from
+LDI FIB_POSITION, 3 ;Where we start from
 
-NEXT:	CPI FIB_POSITION, 5 //we're looking for Fibonacci number at position 5
- 		BREQ DONE
+NEXT:	CPI FIB_POSITION, 5 ;We're looking for Fibonacci number at position 5
+ 		BREQ DONE ; The program will end when the number being compared to is reached
 
 		; Setup call, pushing the argument:
-		PUSH FIB_POSITION
+		PUSH FIB_POSITION ;Put the value onto the stack and decrement the stack pointer
 		; CALL the subroutine:
 		CALL FIBONACCI
 		; Retrieve the result (return value):
-		POP RESULT
+		POP RESULT ;Increment the stack pointer what the stack points at will be returned and saved in RESULT
 
 		; Store results and continue
-		ST X+, RESULT
-		INC FIB_POSITION
+		ST X+, RESULT ;Stores RESULT at X_HIGH and X_LOW and increment pointer
+		INC FIB_POSITION ; Increment the fibonacci position to look at
 		JMP NEXT
 
 FIBONACCI: 	 
@@ -89,7 +92,7 @@ ENDFIBONACCI:
     POP R16
     POP R22
     POP RESULT
-    RET             ;Returning to the start frequency again, in this case NEXT
+    RET             ;Returning to the frequency again at the line after the call
  
 IFONE:
     LDI R18, 1      ;Store value 1 into register 18, to return 1 in case our fibonacci number is 1

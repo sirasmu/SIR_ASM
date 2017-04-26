@@ -45,7 +45,7 @@ version of fib-function (Fibonacci sequence).
 LDI FIB_POSITION, 1 ;Where we start from
 
 NEXT:	
-	CPI FIB_POSITION, 13 ;We're looking for Fibonacci number at position 5
+	CPI FIB_POSITION, 3 ;We're looking for Fibonacci number at position 5
  	BREQ DISPLAY			;The program will end when the number being compared to is reached
 	
 	; Setup call, pushing the argument:
@@ -106,13 +106,30 @@ BASECASE:
     RJMP ENDFIBONACCI
 
 DISPLAY:							; Display the fib numbers using the LEDs
-		LDI R26, 0x00					; Reset the X array pointer to the start of the array
+		LDI R24, 0
+		LDI X_LOW, 0x00					; Reset the X array pointer to the start of the array
 		RUN:							; Loop for sending values to LEDs
-		LD LIGHT, X+						; Increment array index
-		COM LIGHT						; Turns temp value to be displayed
-		RJMP BLINK						; Run blink loop
-		RJMP RUN						; Jump back to start of loop
+			LD LIGHT, X+						; Increment array index
+			COM LIGHT						; Turns temp value to be displayed
+			RJMP BLINK						; Run blink loop
+			INC R24
+			CP R24,FIB_POSITION
+			BREQ REVERSE_DISPLAY
+			RJMP RUN						; Jump back to start of loop
 
+REVERSE_DISPLAY:							; Display the fib numbers using the LEDs
+		MOV R24, FIB_POSITION
+		LDI X_LOW, 0x00					; Reset the X array pointer to the start of the array
+		RUN2:							; Loop for sending values to LEDs
+			LD LIGHT, -X						; Increment array index
+			COM LIGHT						; Turns temp value to be displayed
+			RJMP BLINK						; Run blink loop
+			DEC R24
+			CPI R24,0
+			BREQ DONE
+			RJMP RUN2						; Jump back to start of loop
+DONE: 
+	RJMP DONE
 	BLINK: 
 		OUT PORTB, LIGHT					; Send the Fib result value to the LEDs
 		CALL LONG_DELAY						; Delay
@@ -125,7 +142,7 @@ DISPLAY:							; Display the fib numbers using the LEDs
 		CALL LONG_DELAY						; Delay
 		CALL LONG_DELAY						; Delay
 		LDI R17, 0xFF
-		OUT PORTB, R17					; Turn the LEDs off
+		OUT PORTB, R17						; Turn the LEDs off
 		CALL LONG_DELAY						; Delay
 		CALL LONG_DELAY						; Delay
 		CALL LONG_DELAY						; Delay
@@ -155,8 +172,7 @@ LONG_DELAY:
 		CALL delay
 		CALL delay
 		CALL delay
-		call delay
+		CALL delay
 		RET
        
-DONE: 
-	RJMP DONE
+

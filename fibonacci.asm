@@ -100,6 +100,28 @@ BASECASE:
     RJMP ENDFIBONACCI
 
 DISPLAY:
+
+/*DELAYS*/ 
+DELAY:  LDI r24,255
+		D1:	LDI r25, 255
+		D2:	NOP
+			NOP
+			DEC r25
+			BRNE d2
+			DEC r24
+			BRNE d1
+			RET
+	
+LONG_DELAY:
+		CALL delay
+		CALL delay
+		CALL delay
+		CALL delay
+		CALL delay
+		CALL delay
+		CALL delay
+		call delay
+		RET
 	
        
 DONE: 

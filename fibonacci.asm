@@ -13,6 +13,12 @@ start:
 .equ MEMSTARTHIGH = 0x55
 .equ MEMSTARTLOW = 0xAA
 
+;-------------------------
+.def LIGHT = R23			;Output
+LDI LIGHT, 0xFF				;Load high value for Output port
+OUT DDRB, LIGHT				;Configure PortB as an Output port
+;-------------------------
+
 ; Initialize array pointer to the start of the array where we will store the FIB-numbers
 LDI X_HIGH, MEMSTARTHIGH
 LDI X_LOW, MEMSTARTLOW
@@ -39,8 +45,8 @@ version of fib-function (Fibonacci sequence).
 LDI FIB_POSITION, 1 ;Where we start from
 
 NEXT:	
-	CPI FIB_POSITION, 2 ;We're looking for Fibonacci number at position 5
- 	BREQ DONE			;The program will end when the number being compared to is reached
+	CPI FIB_POSITION, 13 ;We're looking for Fibonacci number at position 5
+ 	BREQ DISPLAY			;The program will end when the number being compared to is reached
 	
 	; Setup call, pushing the argument:
 	PUSH FIB_POSITION	;Put the value onto the stack and decrement the stack pointer
@@ -99,10 +105,39 @@ BASECASE:
     ST X, R18			;Store the value from register 18 into our RAM stack address
     RJMP ENDFIBONACCI
 
-DISPLAY:
+DISPLAY:							; Display the fib numbers using the LEDs
+		LDI R26, 0x00					; Reset the X array pointer to the start of the array
+		RUN:							; Loop for sending values to LEDs
+		LD LIGHT, X+						; Increment array index
+		COM LIGHT						; Turns temp value to be displayed
+		RJMP BLINK						; Run blink loop
+		RJMP RUN						; Jump back to start of loop
 
-/*DELAYS*/ 
-DELAY:  LDI r24,255
+	BLINK: 
+		OUT PORTB, LIGHT					; Send the Fib result value to the LEDs
+		CALL LONG_DELAY						; Delay
+		CALL LONG_DELAY						; Delay
+		CALL LONG_DELAY						; Delay
+		CALL LONG_DELAY						; Delay
+		CALL LONG_DELAY						; Delay
+		CALL LONG_DELAY						; Delay
+		CALL LONG_DELAY						; Delay
+		CALL LONG_DELAY						; Delay
+		CALL LONG_DELAY						; Delay
+		LDI R17, 0xFF
+		OUT PORTB, R17					; Turn the LEDs off
+		CALL LONG_DELAY						; Delay
+		CALL LONG_DELAY						; Delay
+		CALL LONG_DELAY						; Delay
+		CALL LONG_DELAY						; Delay
+		CALL LONG_DELAY						; Delay
+		CALL LONG_DELAY						; Delay
+		CALL LONG_DELAY						; Delay
+		CALL LONG_DELAY						; Delay
+		CALL LONG_DELAY						; Delay
+		RJMP RUN						; Repeat
+
+	 DELAY:  LDI r24,255
 		D1:	LDI r25, 255
 		D2:	NOP
 			NOP
@@ -122,7 +157,6 @@ LONG_DELAY:
 		CALL delay
 		call delay
 		RET
-	
        
 DONE: 
 	RJMP DONE

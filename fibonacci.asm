@@ -105,54 +105,40 @@ BASECASE:
     ST X, R18			;Store the value from register 18 into our RAM stack address
     RJMP ENDFIBONACCI
 
-DISPLAY:							; Display the fib numbers using the LEDs
-		LDI R24, 0
-		LDI X_LOW, 0x00					; Reset the X array pointer to the start of the array
-		RUN:							; Loop for sending values to LEDs
-			LD LIGHT, X+						; Increment array index
-			COM LIGHT						; Turns temp value to be displayed
-			RJMP BLINK						; Run blink loop
-			INC R24
-			CP R24,FIB_POSITION
-			BREQ REVERSE_DISPLAY
-			RJMP RUN						; Jump back to start of loop
-
-REVERSE_DISPLAY:							; Display the fib numbers using the LEDs
-		MOV R24, FIB_POSITION
-		LDI X_LOW, 0x00					; Reset the X array pointer to the start of the array
-		RUN2:							; Loop for sending values to LEDs
-			LD LIGHT, -X						; Increment array index
-			COM LIGHT						; Turns temp value to be displayed
-			RJMP BLINK						; Run blink loop
-			DEC R24
-			CPI R24,0
-			BREQ DONE
-			RJMP RUN2						; Jump back to start of loop
 DONE: 
 	RJMP DONE
-	BLINK: 
-		OUT PORTB, LIGHT					; Send the Fib result value to the LEDs
-		CALL LONG_DELAY						; Delay
-		CALL LONG_DELAY						; Delay
-		CALL LONG_DELAY						; Delay
-		CALL LONG_DELAY						; Delay
-		CALL LONG_DELAY						; Delay
-		CALL LONG_DELAY						; Delay
-		CALL LONG_DELAY						; Delay
-		CALL LONG_DELAY						; Delay
-		CALL LONG_DELAY						; Delay
+
+DISPLAY:					;Display the values found in the Fibonacci sequence
+		LDI R26, 0x00			;Set the X pointer to the start
+		REPEAT:		
+			LD LIGHT, X+		;Increment the X pointer and load the X value into the LIGHT registry
+			COM LIGHT		;Invert value for displaying it
+			RJMP OUTPUT_LOOP	
+			RJMP REPEAT	
+
+	OUTPUT_LOOP: 
+		OUT PORTB, LIGHT				;Light up the LEDs so the binary value of the fibonacci number can be read
+		CALL LONG_DELAY						
+		CALL LONG_DELAY						
+		CALL LONG_DELAY						
+		CALL LONG_DELAY						
+		CALL LONG_DELAY						
+		CALL LONG_DELAY						
+		CALL LONG_DELAY						
+		CALL LONG_DELAY						
+		CALL LONG_DELAY	
 		LDI R17, 0xFF
-		OUT PORTB, R17						; Turn the LEDs off
-		CALL LONG_DELAY						; Delay
-		CALL LONG_DELAY						; Delay
-		CALL LONG_DELAY						; Delay
-		CALL LONG_DELAY						; Delay
-		CALL LONG_DELAY						; Delay
-		CALL LONG_DELAY						; Delay
-		CALL LONG_DELAY						; Delay
-		CALL LONG_DELAY						; Delay
-		CALL LONG_DELAY						; Delay
-		RJMP RUN						; Repeat
+		OUT PORTB, R17					;Turn off LEDs
+		CALL LONG_DELAY						
+		CALL LONG_DELAY						
+		CALL LONG_DELAY						
+		CALL LONG_DELAY						
+		CALL LONG_DELAY						
+		CALL LONG_DELAY						
+		CALL LONG_DELAY						
+		CALL LONG_DELAY						
+		CALL LONG_DELAY						
+		RJMP REPEAT				
 
 	 DELAY:  LDI r24,255
 		D1:	LDI r25, 255

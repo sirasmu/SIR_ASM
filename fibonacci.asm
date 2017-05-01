@@ -5,14 +5,14 @@
 ; Author : SIR, AIC
 ;
 
-start: 
-.def X_HIGH = R27		; The high value of the X Register
-.def X_LOW = R26		; The low value of the X Register
-.def FIB_POSITION = R20
-.def RESULT = R21		;This
-.equ MEMSTARTHIGH = 0x55
-.equ MEMSTARTLOW = 0xAA
-
+.def X_HIGH = R27			; The high value of the X Register
+.def X_LOW = R26			; The low value of the X Register
+.def FIB_POSITION = R20		;Fibonacci position to calculate
+.def RESULT = R21			;N
+.equ MEMSTARTHIGH = 0x55	;Test value
+.equ MEMSTARTLOW = 0xAA		;Test value
+.equ MINFIB = 2				;The smallest Fibonacci value to display
+.equ MAXFIB = 12			;The maximal Fibonacci value to display 
 ;-------------------------
 .def LIGHT = R23			;Output
 LDI LIGHT, 0xFF				;Load high value for Output port
@@ -42,11 +42,11 @@ you should now use the VIA Calling Convention to implement a recursive
 version of fib-function (Fibonacci sequence).
 */
 
-LDI FIB_POSITION, 1 ;Where we start from
+LDI FIB_POSITION, MINFIB			;Where we start from
 
 NEXT:	
-	CPI FIB_POSITION, 3 ;We're looking for Fibonacci number at position 5
- 	BREQ DISPLAY			;The program will end when the number being compared to is reached
+	CPI FIB_POSITION, MAXFIB		;We're looking for Fibonacci number at position 5
+ 	BREQ DISPLAY					;The program will end when the number being compared to is reached
 	
 	; Setup call, pushing the argument:
 	PUSH FIB_POSITION	;Put the value onto the stack and decrement the stack pointer
@@ -105,60 +105,46 @@ BASECASE:
     ST X, R18			;Store the value from register 18 into our RAM stack address
     RJMP ENDFIBONACCI
 
-DONE: 
-	RJMP DONE
+;-------------------------
 
-DISPLAY:					;Display the values found in the Fibonacci sequence
-		LDI R26, 0x00			;Set the X pointer to the start
+DISPLAY:						;	Display the values found in the Fibonacci sequence
+		LDI X_LOW, 0x00			;Set the X pointer to the start
+		LDI R17, MINFIB			;Used as a counter
 		REPEAT:		
 			LD LIGHT, X+		;Increment the X pointer and load the X value into the LIGHT registry
-			COM LIGHT		;Invert value for displaying it
-			RJMP OUTPUT_LOOP	
-			RJMP REPEAT	
+			COM LIGHT			;Invert value for displaying it
+			CALL OUTPUT_LOOP
+			INC R17
+			CPI	R17, MAXFIB		;When the count is equal to the max value the program has been through all the values
+			BREQ REPEAT2		;Now it is time for displaying the values backwards
+			JMP REPEAT
+		REPEAT2:		
+			LD LIGHT, -X		;Decrement the X pointer and load the X value into the LIGHT registry
+			COM LIGHT			;Invert value for displaying it
+			CALL OUTPUT_LOOP
+			DEC R17
+			CPI	R17, MINFIB
+			BREQ DISPLAY
+			JMP REPEAT2
 
-	OUTPUT_LOOP: 
-		OUT PORTB, LIGHT				;Light up the LEDs so the binary value of the fibonacci number can be read
-		CALL LONG_DELAY						
-		CALL LONG_DELAY						
-		CALL LONG_DELAY						
-		CALL LONG_DELAY						
-		CALL LONG_DELAY						
-		CALL LONG_DELAY						
-		CALL LONG_DELAY						
-		CALL LONG_DELAY						
-		CALL LONG_DELAY	
-		LDI R17, 0xFF
-		OUT PORTB, R17					;Turn off LEDs
-		CALL LONG_DELAY						
-		CALL LONG_DELAY						
-		CALL LONG_DELAY						
-		CALL LONG_DELAY						
-		CALL LONG_DELAY						
-		CALL LONG_DELAY						
-		CALL LONG_DELAY						
-		CALL LONG_DELAY						
-		CALL LONG_DELAY						
-		RJMP REPEAT				
-
-	 DELAY:  LDI r24,255
-		D1:	LDI r25, 255
-		D2:	NOP
-			NOP
-			DEC r25
-			BRNE d2
-			DEC r24
-			BRNE d1
-			RET
+OUTPUT_LOOP: 
+	OUT PORTB, LIGHT				;Light up the LEDs so the binary value of the fibonacci number can be read
+	CALL DELAY						
+	LDI R18, 0xFF
+	OUT PORTB, R18					;Turn off LEDs
+	CALL DELAY											
+	RET				
 	
-LONG_DELAY:
-		CALL delay
-		CALL delay
-		CALL delay
-		CALL delay
-		CALL delay
-		CALL delay
-		CALL delay
-		CALL delay
-		RET
-       
-
+DELAY:
+; Delay 10 000 000 cycles
+; 1s at 10 MHz
+    LDI  R18, 51
+    LDI  R19, 187
+    LDI  R20, 224
+D1: DEC  R20
+    BRNE D1
+    DEC  R19
+    BRNE D1
+    DEC  R18
+    BRNE D1
+	RET
